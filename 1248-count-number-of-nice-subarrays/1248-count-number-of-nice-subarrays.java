@@ -1,18 +1,21 @@
 class Solution {
-    public int numSubarraysWithSum(int[] nums, int goal) {
-        if (goal < 0) return 0;
-        return atMost(nums, goal) - atMost(nums, goal - 1);
-    }
+    public int numberOfSubarrays(int[] nums, int k) {
+        int n = nums.length;
+        int[] cnt = new int[n + 1];
+        cnt[0] = 1;            // Base case: zero odds before starting
+        int ans = 0, oddCount = 0;
 
-    public int atMost(int[] nums, int goal) {
-        int left = 0, sum = 0, count = 0;
-        for (int right = 0; right < nums.length; right++) {
-            sum += nums[right];                 
-            while (sum > goal) {
-                sum -= nums[left++];
+        for (int v : nums) {
+            oddCount += v & 1; // +1 if v is odd
+
+            // If we have at least k odds so far, there are cnt[oddCount - k] subarrays ending here
+            if (oddCount - k >= 0) {
+                ans += cnt[oddCount - k];
             }
-            count += right - left + 1;
+
+            cnt[oddCount]++;    // Record this oddCount prefix
         }
-        return count;
+
+        return ans;
     }
 }
